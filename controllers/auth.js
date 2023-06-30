@@ -12,7 +12,7 @@ exports.checkPhoneNumber = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.json(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
