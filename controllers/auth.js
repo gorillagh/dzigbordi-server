@@ -6,9 +6,9 @@ exports.checkPhoneNumber = async (req, res) => {
       phoneNumber: req.body.phoneNumber,
     });
     if (found) {
-      res.json("true");
+      res.json({ message: "true" });
     } else {
-      res.json("false");
+      res.json({ message: "false" });
     }
   } catch (error) {
     console.log(error);
