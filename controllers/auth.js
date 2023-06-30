@@ -3,7 +3,7 @@ const User = require("../models/User");
 exports.checkPhoneNumber = async (req, res) => {
   try {
     const found = await User.findOne({
-      phoneNumber: req.params.phoneNumber,
+      phoneNumber: req.body.phoneNumber,
     });
     if (found) {
       res.json("true");

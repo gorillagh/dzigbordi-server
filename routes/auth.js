@@ -16,7 +16,7 @@ const {
   updateUser,
 } = require("../controllers/auth");
 
-router.get("/check-phonenumber/:phoneNumber", checkPhoneNumber);
+router.post("/check-phonenumber", checkPhoneNumber);
 router.post("/create-or-update-user", authCheck, createOrUpdateUser);
 router.post("/login-user", authCheck, loginUser);
 router.post("/current-user", authCheck, currentUser);
