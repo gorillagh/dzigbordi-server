@@ -23,12 +23,7 @@ mongoose
   );
 
 //Middlewares
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST"],
-  })
-);
+app.use(cors());
 
 app.use(morgan("tiny"));
 app.use(express.json({ limit: "6000mb" })); //Used to parse JSON bodies
