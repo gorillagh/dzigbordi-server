@@ -7,12 +7,12 @@ const departmentSchema = new Schema(
       required: "Name is required",
       text: true,
     },
-    slug: {
-      type: String,
-      unique: true,
-      lowercase: true,
-      index: true,
-    },
+    // slug: {
+    //   type: String,
+    //   unique: true,
+    //   lowercase: true,
+    //   index: true,
+    // },
   },
   { timestamps: true }
 );

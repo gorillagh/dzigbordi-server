@@ -11,12 +11,12 @@ const categorySchema = new Schema(
       text: true,
     },
     description: String,
-    slug: {
-      type: String,
-      unique: true,
-      lowercase: true,
-      index: true,
-    },
+    // slug: {
+    //   type: String,
+    //   unique: true,
+    //   lowercase: true,
+    //   index: true,
+    // },
   },
   { timestamps: true }
 );

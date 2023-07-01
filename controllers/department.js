@@ -74,7 +74,10 @@ exports.deleteDepartment = async (req, res) => {
       return res.status(404).json({ error: "Department not found" });
     }
 
-    res.json({ message: "Department deleted successfully" });
+    res.json({
+      message: `${deletedDepartment.name} deleted successfully`,
+      status: "ok",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });

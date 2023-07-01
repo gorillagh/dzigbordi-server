@@ -9,14 +9,14 @@ const branchSchema = new Schema(
     },
     location: {
       type: String,
-      required: true,
+      // required: true,
     },
-    slug: {
-      type: String,
-      unique: true,
-      lowercase: true,
-      index: true,
-    },
+    // slug: {
+    //   type: String,
+    //   unique: true,
+    //   lowercase: true,
+    //   index: true,
+    // },
   },
   { timestamps: true }
 );

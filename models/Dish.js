@@ -15,12 +15,12 @@ const dishSchema = new Schema(
       maxlength: 70,
       text: true,
     },
-    slug: {
-      type: String,
-      unique: true,
-      lowercase: true,
-      index: true,
-    },
+    // slug: {
+    //   type: String,
+    //   unique: true,
+    //   lowercase: true,
+    //   index: true,
+    // },
     code: { type: String, required: true },
     description: String,
     daysServed: {
