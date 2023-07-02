@@ -39,13 +39,9 @@ exports.fetchUser = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    const { name, phone, branch, department } = req.body;
-
+    console.log("req body---->", req.body);
     const user = new User({
-      name,
-      phone,
-      branch,
-      department,
+      ...req.body,
     });
 
     await user.save();
