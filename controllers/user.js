@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const Branch = require("../models/Branch");
+const Department = require("../models/Department");
 
 const cloudinary = require("cloudinary").v2;
 
@@ -39,17 +41,36 @@ exports.fetchUser = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    console.log("req body---->", req.body);
+    const { branch, department, ...userData } = req.body;
+
+    // Retrieve the branch and department documents from their respective collections
+    const b = await Branch.findById(branch);
+    const d = await Department.findById(department);
+
+    if (!branch || !department) {
+      return res.status(404).json({ error: "Branch or department not found" });
+    }
+
+    // Assign the retrieved branch and department to the user document
     const user = new User({
-      ...req.body,
+      ...userData,
+      branch: b,
+      department: d,
     });
 
     await user.save();
 
     res.json(user);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    // console.log(error);
+    console.log(error.code);
+    res.json({
+      message:
+        error.code === 11000
+          ? "Phone number already exists!"
+          : "Internal server error",
+      status: "false",
+    });
   }
 };
 
@@ -82,7 +103,10 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json({ message: "User deleted successfully" });
+    res.json({
+      message: `${deletedUser.name} deleted successfully`,
+      status: "ok",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });

@@ -4,8 +4,10 @@ const { ObjectId } = mongoose.Schema;
 const userSchema = new mongoose.Schema(
   {
     phoneNumber: {
+      unique: true,
       type: String,
       required: true,
+      index: true,
     },
     name: {
       type: String,
