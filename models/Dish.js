@@ -22,11 +22,20 @@ const dishSchema = new Schema(
     //   lowercase: true,
     //   index: true,
     // },
-    code: { type: String, required: true },
+    code: { type: String, required: true, unique: true },
     description: String,
     daysServed: {
       type: [String],
       enum: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
+      default: [
         "Monday",
         "Tuesday",
         "Wednesday",
