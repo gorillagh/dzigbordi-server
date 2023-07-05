@@ -6,6 +6,7 @@ const branchSchema = new Schema(
       type: String,
       required: "Name is required",
       text: true,
+      unique: true,
     },
     location: {
       type: String,

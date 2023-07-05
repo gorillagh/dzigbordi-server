@@ -6,6 +6,7 @@ const departmentSchema = new Schema(
       type: String,
       required: "Name is required",
       text: true,
+      unique: true,
     },
     // slug: {
     //   type: String,

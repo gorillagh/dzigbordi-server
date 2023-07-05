@@ -6,13 +6,21 @@ const cloudinary = require("cloudinary").v2;
 
 exports.fetchUsers = async (req, res) => {
   try {
+    const categorizedUsers = { subscriber: [], staff: [], admin: [] };
+
     const users = await User.find()
       .populate("favorites")
       .populate("branch")
       .populate("department")
       .sort([["createdAt", "asc"]])
       .exec();
-    res.json(users);
+
+    // Categorize users by role
+    users.forEach((user) => {
+      categorizedUsers[user.role].push(user);
+    });
+
+    res.json(categorizedUsers);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
@@ -76,17 +84,45 @@ exports.createUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: req.params.id },
-      { $set: req.body },
-      { new: true }
-    ).exec();
+    const { branch, department, ...userData } = req.body;
+    const { id } = req.params;
 
-    if (!updatedUser) {
+    // Retrieve the branch and department documents from their respective collections
+    const b = await Branch.findById(branch);
+    const d = await Department.findById(department);
+
+    if (!b || !d) {
+      return res.status(404).json({ error: "Branch or department not found" });
+    }
+
+    // Check if the phone number already exists for a different user
+    const existingUser = await User.findOne({
+      phoneNumber: userData.phoneNumber,
+      _id: { $ne: id },
+    });
+    if (existingUser) {
+      return res.json({
+        message: "Phone number already exsists",
+        status: "false",
+      });
+    }
+
+    // Update the user document
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        ...userData,
+        branch: b,
+        department: d,
+      },
+      { new: true }
+    );
+
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json(updatedUser);
+    res.json(user);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });

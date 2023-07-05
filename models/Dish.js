@@ -14,6 +14,7 @@ const dishSchema = new Schema(
       required: true,
       maxlength: 70,
       text: true,
+      unique: true,
     },
     // slug: {
     //   type: String,
