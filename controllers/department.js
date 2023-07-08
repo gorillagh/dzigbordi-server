@@ -39,13 +39,31 @@ exports.createDepartment = async (req, res) => {
     res.json(department);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.json({
+      message:
+        error.code === 11000
+          ? "Department already exists!"
+          : "Internal server error",
+      status: "false",
+    });
   }
 };
 
 exports.updateDepartment = async (req, res) => {
   try {
     const departmentId = req.params.id;
+    const { name } = req.body;
+
+    // Check if the department name already exists
+    const existingDepartment = await Department.findOne({ name });
+
+    if (existingDepartment) {
+      return res.json({
+        message: "Department name already exists",
+        status: "false",
+      });
+    }
+
     const updatedDepartment = await Department.findByIdAndUpdate(
       departmentId,
       req.body,

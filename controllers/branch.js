@@ -40,18 +40,37 @@ exports.createBranch = async (req, res) => {
     res.json(branch);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.json({
+      message:
+        error.code === 11000
+          ? "Branch already exists!"
+          : "Internal server error",
+      status: "false",
+    });
   }
 };
 
 exports.updateBranch = async (req, res) => {
   try {
     const branchId = req.params.id;
-    console.log("body---->", req.body);
+    const { name } = req.body;
+
+    // Check if the branch name already exists
+    const existingBranch = await Branch.findOne({ name });
+
+    if (existingBranch) {
+      return res.json({
+        message: "Branch name already exists",
+        status: "false",
+      });
+    }
+
     const updatedBranch = await Branch.findByIdAndUpdate(branchId, req.body, {
       new: true,
     }).exec();
+
     console.log("updated----->", updatedBranch);
+
     if (!updatedBranch) {
       return res.status(404).json({ error: "Branch not found" });
     }

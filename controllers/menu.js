@@ -45,13 +45,28 @@ exports.createMenu = async (req, res) => {
     res.status(201).json({ menu });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.json({
+      message:
+        error.code === 11000 ? "Dish already exists!" : "Internal server error",
+      status: "false",
+    });
   }
 };
 
 exports.updateMenu = async (req, res) => {
   try {
     const menuId = req.params.id;
+    const { name } = req.body;
+
+    // Check if the menu name already exists
+    const existingMenu = await Menu.findOne({ name });
+
+    if (existingMenu) {
+      return res
+        .status(400)
+        .json({ message: "Menu name already exists", status: "false" });
+    }
+
     const updatedMenu = await Menu.findByIdAndUpdate(menuId, req.body, {
       new: true,
     }).exec();
@@ -76,7 +91,7 @@ exports.deleteMenu = async (req, res) => {
       return res.status(404).json({ error: "Menu not found" });
     }
 
-    res.json({ message: "Menu deleted successfully" });
+    res.json({ message: "Menu deleted successfully", status: "ok" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });

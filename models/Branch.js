@@ -3,10 +3,10 @@ const { Schema, model } = require("mongoose");
 const branchSchema = new Schema(
   {
     name: {
+      unique: true,
       type: String,
       required: "Name is required",
       text: true,
-      unique: true,
     },
     location: {
       type: String,

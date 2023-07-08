@@ -58,13 +58,37 @@ exports.createDish = async (req, res) => {
     res.json(dish);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.json({
+      message:
+        error.code === 11000 ? "Dish already exists!" : "Internal server error",
+      status: "false",
+    });
   }
 };
 
 exports.updateDish = async (req, res) => {
   try {
     const dishId = req.params.id;
+    const { code, name } = req.body;
+
+    // Check if the dish code already exists
+    const existingDishCode = await Dish.findOne({ code });
+
+    if (existingDishCode) {
+      return res
+        .status(400)
+        .json({ message: "Dish code already exists", status: "false" });
+    }
+
+    // Check if the dish name already exists
+    const existingDishName = await Dish.findOne({ name });
+
+    if (existingDishName) {
+      return res
+        .status(400)
+        .json({ message: "Dish name already exists", status: "false" });
+    }
+
     const updatedDish = await Dish.findByIdAndUpdate(dishId, req.body, {
       new: true,
     }).exec();
@@ -89,7 +113,7 @@ exports.deleteDish = async (req, res) => {
       return res.status(404).json({ error: "Dish not found" });
     }
 
-    res.json({ message: "Dish deleted successfully" });
+    res.json({ message: "Dish deleted successfully", status: "ok" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });

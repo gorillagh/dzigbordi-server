@@ -39,13 +39,31 @@ exports.createCategory = async (req, res) => {
     res.json(category);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.json({
+      message:
+        error.code === 11000
+          ? "category already exists!"
+          : "Internal server error",
+      status: "false",
+    });
   }
 };
 
 exports.updateCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
+    const { name } = req.body;
+
+    // Check if the category name already exists
+    const existingCategory = await Category.findOne({ name });
+
+    if (existingCategory) {
+      return res.json({
+        message: "Category name already exists",
+        status: "false",
+      });
+    }
+
     const updatedCategory = await Category.findByIdAndUpdate(
       categoryId,
       req.body,
@@ -72,7 +90,7 @@ exports.deleteCategory = async (req, res) => {
       return res.status(404).json({ error: "Category not found" });
     }
 
-    res.json({ message: "Category deleted successfully" });
+    res.json({ message: "Category deleted successfully", status: "ok" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
