@@ -1,14 +1,12 @@
 const Dish = require("../models/Dish");
-const Category = require("../models/Category");
 const cloudinary = require("cloudinary").v2;
+const { v4: uuid } = require("uuid");
 
 exports.fetchDishes = async (req, res) => {
   try {
     const dishes = await Dish.find().populate("category").exec();
 
-    const categories = await Category.find().exec();
-
-    res.json({ dishes, categories });
+    res.json(dishes);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
@@ -111,6 +109,12 @@ exports.deleteDish = async (req, res) => {
 
     if (!deletedDish) {
       return res.status(404).json({ error: "Dish not found" });
+    }
+
+    // Delete the associated image from Cloudinary
+    if (deletedDish.image) {
+      const publicId = deletedDish.image.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(publicId);
     }
 
     res.json({ message: "Dish deleted successfully", status: "ok" });
