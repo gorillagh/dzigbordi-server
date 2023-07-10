@@ -1,4 +1,5 @@
 const Menu = require("../models/Menu");
+const Dish = require("../models/Dish");
 const cloudinary = require("cloudinary").v2;
 
 exports.fetchMenus = async (req, res) => {
@@ -6,6 +7,26 @@ exports.fetchMenus = async (req, res) => {
     const menus = await Menu.find().populate("dishes").exec();
 
     res.json({ menus });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.fetchCurrentDayMenu = async (req, res) => {
+  try {
+    const currentHour = new Date().getHours();
+    const currentDay = new Date().getDay();
+    const adjustedDay = currentHour < 9 ? currentDay - 1 : currentDay;
+
+    // Map the adjusted day to the corresponding day of the week
+    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const currentDayOfWeek = daysOfWeek[adjustedDay];
+
+    // Fetch the dishes for the current day
+    const dishes = await Dish.find({ daysServed: currentDayOfWeek });
+    console.log("currentDay====>", typeof currentDayOfWeek);
+    res.json({ day: currentDayOfWeek, dishes });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
