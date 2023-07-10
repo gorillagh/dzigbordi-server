@@ -69,8 +69,8 @@ exports.updateDish = async (req, res) => {
     const dishId = req.params.id;
     const { code, name } = req.body;
 
-    // Check if the dish code already exists
-    const existingDishCode = await Dish.findOne({ code });
+    // Check if the dish code already exists for a different dish
+    const existingDishCode = await Dish.findOne({ code, _id: { $ne: dishId } });
 
     if (existingDishCode) {
       return res
@@ -78,8 +78,8 @@ exports.updateDish = async (req, res) => {
         .json({ message: "Dish code already exists", status: "false" });
     }
 
-    // Check if the dish name already exists
-    const existingDishName = await Dish.findOne({ name });
+    // Check if the dish name already exists for a different dish
+    const existingDishName = await Dish.findOne({ name, _id: { $ne: dishId } });
 
     if (existingDishName) {
       return res
