@@ -14,7 +14,10 @@ const {
   deleteOrder,
   fetchUserOrders,
   fetchUserOrder,
+  fetchSummary,
 } = require("../controllers/order");
+
+router.post("/summary", authCheck, staffCheck, fetchSummary);
 
 router.post("/orders", authCheck, staffCheck, fetchOrders);
 router.post("/orders/:id", authCheck, staffCheck, fetchOrder);

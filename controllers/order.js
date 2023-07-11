@@ -1,5 +1,11 @@
 const User = require("../models/User");
 const Order = require("../models/Order");
+const Department = require("../models/Department");
+const Branch = require("../models/Branch");
+const Category = require("../models/Category");
+const Dish = require("../models/Dish");
+const Menu = require("../models/Menu");
+
 const axios = require("axios");
 
 const Pusher = require("pusher");
@@ -43,6 +49,35 @@ const sendSMS = async (phoneNumber, reference) => {
       customerResponse.data,
       customerResponse.data
     );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.fetchSummary = async (req, res) => {
+  try {
+    //////get
+    // 1. number of dishes
+    const dishesTotal = 1;
+    // 2. number of categories
+    const categoriesTotal = 1;
+
+    // 3. number of customers
+    const customersTotal = 1;
+    // 4. number of staff
+    const staffTotal = 1;
+    // 5. number of admins
+    const adminsTotal = 1;
+    // 6. numberof branches
+    const branchesTotal = 1;
+    // 7. number of departments
+    const departmentsTotal = 1;
+    res.json({
+      ordersInfo: { upComing: 0, all: 0 },
+      menuInfo: { dishesTotal, categoriesTotal },
+      usersInfo: { customersTotal, staffTotal, adminsTotal },
+      bankInfo: { branchesTotal, departmentsTotal },
+    });
   } catch (error) {
     console.log(error);
   }
