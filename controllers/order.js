@@ -56,22 +56,27 @@ const sendSMS = async (phoneNumber, reference) => {
 
 exports.fetchSummary = async (req, res) => {
   try {
-    //////get
-    // 1. number of dishes
-    const dishesTotal = 1;
-    // 2. number of categories
-    const categoriesTotal = 1;
+    // 1. Number of dishes
+    const dishesTotal = await Dish.countDocuments();
 
-    // 3. number of customers
-    const customersTotal = 1;
-    // 4. number of staff
-    const staffTotal = 1;
-    // 5. number of admins
-    const adminsTotal = 1;
-    // 6. numberof branches
-    const branchesTotal = 1;
-    // 7. number of departments
-    const departmentsTotal = 1;
+    // 2. Number of categories
+    const categoriesTotal = await Category.countDocuments();
+
+    // 3. Number of customers
+    const customersTotal = await User.countDocuments({ role: "subscriber" });
+
+    // 4. Number of staff
+    const staffTotal = await User.countDocuments({ role: "staff" });
+
+    // 5. Number of admins
+    const adminsTotal = await User.countDocuments({ role: "admin" });
+
+    // 6. Number of branches
+    const branchesTotal = await Branch.countDocuments();
+
+    // 7. Number of departments
+    const departmentsTotal = await Department.countDocuments();
+
     res.json({
       ordersInfo: { upComing: 0, all: 0 },
       menuInfo: { dishesTotal, categoriesTotal },
