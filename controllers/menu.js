@@ -20,12 +20,19 @@ exports.fetchCurrentDayMenu = async (req, res) => {
     const adjustedDay = currentHour < 9 ? currentDay - 1 : currentDay;
 
     // Map the adjusted day to the corresponding day of the week
-    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const daysOfWeek = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
     const currentDayOfWeek = daysOfWeek[adjustedDay];
 
     // Fetch the dishes for the current day
     const dishes = await Dish.find({ daysServed: currentDayOfWeek });
-    console.log("currentDay====>", typeof currentDayOfWeek);
     res.json({ day: currentDayOfWeek, dishes });
   } catch (error) {
     console.log(error);
