@@ -9,7 +9,7 @@ const { authCheck, staffCheck, adminCheck } = require("../middlewares/auth");
 const {
   fetchOrders,
   fetchOrder,
-  createOrder,
+  createOrUpdateOrder,
   updateOrder,
   deleteOrder,
   fetchUserOrders,
@@ -21,7 +21,7 @@ router.post("/summary", authCheck, staffCheck, fetchSummary);
 
 router.post("/orders", authCheck, staffCheck, fetchOrders);
 router.post("/orders/:id", authCheck, staffCheck, fetchOrder);
-router.post("/orders-create", authCheck, staffCheck, createOrder);
+router.post("/orders-create-or-update", authCheck, createOrUpdateOrder);
 router.post("/orders-update/:id", authCheck, staffCheck, updateOrder);
 router.post("/orders-delete/:id", authCheck, staffCheck, deleteOrder);
 

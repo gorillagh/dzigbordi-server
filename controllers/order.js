@@ -128,23 +128,53 @@ exports.fetchOrder = async (req, res) => {
   }
 };
 
-exports.createOrder = async (req, res) => {
+exports.createOrUpdateOrder = async (req, res) => {
   try {
-    const { dishes, notes } = req.body.data;
-    const { _id, phoneNumber } = await User.findOne({
-      phoneNumber: req.user.phone_number,
-    }).exec();
-    const reference = uuid();
-    const newOrder = await new Order({
-      reference,
-      orderedBy: _id,
-      dishes,
-      notes,
-    }).save();
-    pusher.trigger("newOrder", "order-placed", newOrder);
-    await sendSMS(phoneNumber, reference);
+    console.log("Order---->", req.body);
 
-    res.json("Order placed");
+    const existingOrder = await Order.findOne({ date: req.body.date });
+
+    if (existingOrder) {
+      const { orderList } = existingOrder;
+      const userId = req.body.orderedBy;
+      const orderItem = orderList.find((item) => item.orderedBy.equals(userId));
+
+      if (orderItem) {
+        // Update existing order item
+        const { _id, quantity } = req.body.dish;
+        orderItem.dishes.push({ _id, quantity });
+      } else {
+        // Create new order item
+        const { _id, quantity } = req.body.dish;
+        const newOrderItem = {
+          orderedBy: userId,
+          dishes: [{ _id, quantity }],
+        };
+        orderList.push(newOrderItem);
+      }
+
+      await existingOrder.save();
+
+      res.json({ order: existingOrder });
+    } else {
+      // Create new order
+      const { date, orderedBy, dish } = req.body;
+
+      const newOrder = new Order({
+        date,
+        orderList: [
+          {
+            orderedBy: orderedBy,
+            dishes: [{ dish: dish._id, quantity: dish.quantity }],
+          },
+        ],
+      });
+
+      await newOrder.save();
+
+      res.json({ order: newOrder });
+    }
+
     return;
   } catch (error) {
     console.log(error);

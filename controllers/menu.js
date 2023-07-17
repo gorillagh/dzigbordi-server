@@ -1,6 +1,6 @@
 const Menu = require("../models/Menu");
 const Dish = require("../models/Dish");
-const cloudinary = require("cloudinary").v2;
+const Order = require("../models/Order");
 
 exports.fetchMenus = async (req, res) => {
   try {
@@ -19,7 +19,7 @@ exports.fetchCurrentDayMenu = async (req, res) => {
     const currentDay = new Date().getDay();
     const adjustedDay = currentHour < 9 ? currentDay - 1 : currentDay;
     const adjustedDate = new Date();
-    adjustedDate.setDate(adjustedDate.getDate() - adjustedDay);
+    adjustedDate.setDate(adjustedDate.getDate() + adjustedDay);
 
     // Format the adjusted date
     const formattedDate = `${adjustedDate
@@ -44,7 +44,32 @@ exports.fetchCurrentDayMenu = async (req, res) => {
     console.log("current day===>", currentDayOfWeek);
     // Fetch the dishes for the current day
     const dishes = await Dish.find({ daysServed: currentDayOfWeek });
-    res.json({ day: currentDayOfWeek, date: formattedDate, dishes });
+
+    // Check if there is an order with the adjusted date
+    const existingOrder = await Order.findOne({ date: formattedDate });
+
+    if (!existingOrder) {
+      // Create a new order with the adjusted date
+      const newOrder = new Order({
+        date: formattedDate,
+        orderList: [],
+      });
+      await newOrder.save();
+
+      res.json({
+        day: currentDayOfWeek,
+        date: formattedDate,
+        dishes,
+        orders: newOrder.orderList,
+      });
+    } else {
+      res.json({
+        day: currentDayOfWeek,
+        date: formattedDate,
+        dishes,
+        orders: existingOrder.orderList,
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
