@@ -6,7 +6,7 @@ const dishSchema = new Schema(
   {
     image: {
       type: String,
-      required: true,
+      // required: true,
     },
     name: {
       type: String,

@@ -18,7 +18,18 @@ exports.fetchCurrentDayMenu = async (req, res) => {
     const currentHour = new Date().getHours();
     const currentDay = new Date().getDay();
     const adjustedDay = currentHour < 9 ? currentDay - 1 : currentDay;
+    const adjustedDate = new Date();
+    adjustedDate.setDate(adjustedDate.getDate() - adjustedDay);
 
+    // Format the adjusted date
+    const formattedDate = `${adjustedDate
+      .getDate()
+      .toString()
+      .padStart(2, "0")}/${(adjustedDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${adjustedDate.getFullYear()}`;
+
+    console.log("date===>", formattedDate);
     // Map the adjusted day to the corresponding day of the week
     const daysOfWeek = [
       "Monday",
@@ -30,10 +41,10 @@ exports.fetchCurrentDayMenu = async (req, res) => {
       "Sunday",
     ];
     const currentDayOfWeek = daysOfWeek[adjustedDay];
-
+    console.log("current day===>", currentDayOfWeek);
     // Fetch the dishes for the current day
     const dishes = await Dish.find({ daysServed: currentDayOfWeek });
-    res.json({ day: currentDayOfWeek, dishes });
+    res.json({ day: currentDayOfWeek, date: formattedDate, dishes });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
