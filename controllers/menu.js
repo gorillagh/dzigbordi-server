@@ -15,21 +15,31 @@ exports.fetchMenus = async (req, res) => {
 
 exports.fetchCurrentDayMenu = async (req, res) => {
   try {
-    const currentHour = new Date().getHours();
-    const currentDay = new Date().getDay();
+    const currentUTCDate = new Date();
+    const currentHour = currentUTCDate.getUTCHours();
+    const currentDay = currentUTCDate.getUTCDay();
     let adjustedDay = currentHour < 9 ? currentDay : currentDay + 1;
     if (adjustedDay > 6) adjustedDay = 0;
-    const adjustedDate = new Date();
-    adjustedDate.setDate(adjustedDate.getDate() + adjustedDay - 2);
-    adjustedDate.setHours(9, 0, 0, 0);
+    let daysToAdd = currentHour < 9 ? 0 : 1;
 
-    // Format the adjusted date
+    const adjustedDate = new Date(currentUTCDate);
+    adjustedDate.setUTCDate(adjustedDate.getUTCDate() + daysToAdd);
+    adjustedDate.setUTCHours(9, 0, 0, 0);
+
+    // Format the adjusted date in GMT/UTC
     const formattedDate = `${adjustedDate
-      .getDate()
+      .getUTCDate()
       .toString()
-      .padStart(2, "0")}/${(adjustedDate.getMonth() + 1)
+      .padStart(2, "0")}/${(adjustedDate.getUTCMonth() + 1)
       .toString()
-      .padStart(2, "0")}/${adjustedDate.getFullYear()}`;
+      .padStart(2, "0")}/${adjustedDate.getUTCFullYear()}`;
+
+    console.log("look--->", new Date().getDate());
+
+    console.log("hour---", currentHour);
+    console.log("day-->", currentDay);
+    console.log("adj day--->", adjustedDay);
+    console.log("formattedDate in GMT/UTC:", formattedDate);
 
     // Map the adjusted day to the corresponding day of the week
     const daysOfWeek = [
